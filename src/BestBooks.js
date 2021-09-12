@@ -1,4 +1,6 @@
 import React from 'react';
+import axios from 'axios';
+import Card from 'react-bootstrap/Card';
 
 class BestBooks extends React.Component {
   constructor(props) {
@@ -8,22 +10,50 @@ class BestBooks extends React.Component {
     }
   }
 
-  /* TODO: Make a GET request to your API to fetch books for the logged in user  */
+  componentDidMount = () => {
+  
 
+    axios.get(`${process.env.REACT_APP_API_URL}/books`).then((bookResponse) => {
+
+      this.setState({ books: bookResponse.data });
+    }).catch(error => alert('the book collection is empty.'));
+
+
+  }
   render() {
 
-    /* TODO: render user's books in a Carousel */
 
     return (
-      <>
-        <h2>My Essential Lifelong Learning &amp; Formation Shelf</h2>
-
-        {this.state.books.length ? (
-          <p>Book Carousel coming soon</p>
-        ) : (
-          <h3>No Books Found :(</h3>
-        )}
-      </>
+      <div>
+        {
+          this.state.books.length > 0 &&
+          <>
+            {
+              this.state.books.map(books => {
+                return (
+                  <>
+                    <Card style={{ width: '18rem' }}>
+                      {/* <Card.Img variant="top" src={books.img} /> */}
+                      <Card.Body>
+                        <Card.Title>{books.title}</Card.Title>
+                        <Card.Text>
+                          {books.description}
+                        </Card.Text>
+                        <Card.Text>
+                          {books.status}
+                        </Card.Text>
+                        <Card.Text>
+                          {books.email}
+                        </Card.Text>
+                      </Card.Body>
+                    </Card>
+                  </>
+                )
+              })
+            }
+          </>
+        }
+      </div>
     )
   }
 }
