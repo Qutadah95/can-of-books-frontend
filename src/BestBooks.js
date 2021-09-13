@@ -16,7 +16,7 @@ class BestBooks extends React.Component {
     axios.get(`${process.env.REACT_APP_API_URL}/books`).then((bookResponse) => {
 
       this.setState({ books: bookResponse.data });
-    }).catch(error => alert('the book collection is empty.'));
+    }).catch(() => alert('the book collection is empty.'));
 
 
   }
@@ -29,21 +29,21 @@ class BestBooks extends React.Component {
           this.state.books.length > 0 &&
           <>
             {
-              this.state.books.map(books => {
+              this.state.books.map(book => {
                 return (
                   <>
                     <Card style={{ width: '18rem' }}>
                       {/* <Card.Img variant="top" src={books.img} /> */}
                       <Card.Body>
-                        <Card.Title>{books.title}</Card.Title>
+                        <Card.Title>{book.title}</Card.Title>
                         <Card.Text>
-                          {books.description}
+                          {book.description}
                         </Card.Text>
                         <Card.Text>
-                          {books.status}
+                          {book.status}
                         </Card.Text>
                         <Card.Text>
-                          {books.email}
+                          {book.email}
                         </Card.Text>
                       </Card.Body>
                     </Card>
