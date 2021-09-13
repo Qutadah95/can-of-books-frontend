@@ -1,0 +1,13 @@
+#booksDiv {
+  float: left;
+}
+
+#footerDiv {
+  clear: both;
+}
+
+#booksDiv .card {
+  width: 700px;
+  height: 340px;
+  margin: 20px;
+}
