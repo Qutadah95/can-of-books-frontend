@@ -3,6 +3,7 @@ import axios from "axios";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import AddBook from "./AddBook";
+import UpdateBook from './UpdateBook';
 import "./index.css";
 
 class BestBooks extends React.Component {
@@ -11,6 +12,8 @@ class BestBooks extends React.Component {
     this.state = {
       booksData: [],
       showAddModal: false,
+      showUpdateModal: false,
+      selectedBookDataObj: {}
     };
   }
 
@@ -33,6 +36,44 @@ class BestBooks extends React.Component {
       })
       .catch(() => alert("Something went wrong while posting!"));
   };
+
+  handelUpdateModal = (e) => {
+    e.preventDefault();
+
+    const reqBody = {
+      title: e.target.bookTitle.value,
+      description: e.target.bookDescription.value,
+      status: e.target.bookStatus.value,
+      email: e.target.email.value,
+    };
+    axios.put(`${process.env.REACT_APP_API_URL}/books/${this.state.selectedBookDataObj._id}`, reqBody).then(updatedBookObject => {
+
+  
+      const updateBookArr = this.state.booksData.map(book => {
+       
+console.log(book);
+        if (book._id === this.state.selectedBookDataObj._id) {
+          book = updatedBookObject.data
+          console.log(book,'ii');
+          return book;
+          
+        }
+        console.log(book,'hello');
+        return book; 
+        
+      });
+      
+      this.setState({
+        booksData: updateBookArr,
+        selectedBookDataObj: {},
+      })
+
+console.log(updateBookArr);
+
+      this.handelDisplayUpdateModal(); 
+
+    }).catch(() => alert("Something went wrong!"));
+  }
 
   handelDeleteBook = (bookId) => {
     console.log("1");
@@ -61,6 +102,12 @@ class BestBooks extends React.Component {
   handelDisplayAddModal = () => {
     this.setState({ showAddModal: !this.state.showAddModal });
   };
+  handelDisplayUpdateModal = (BookObj) => {
+    this.setState({
+      showUpdateModal: !this.state.showUpdateModal,
+      selectedBookDataObj: BookObj
+    });
+  }
 
   componentDidMount = () => {
     axios
@@ -92,6 +139,17 @@ class BestBooks extends React.Component {
                       />
                     </>
                   )}
+                  {
+          this.state.showUpdateModal &&
+          <>
+            <UpdateBook
+              show={this.state.showUpdateModal}
+              handelUpdateModal={this.handelUpdateModal}
+              handelDisplayUpdateModal={this.handelDisplayUpdateModal}
+              selectedBookDataObj={this.state.selectedBookDataObj}
+            />
+          </>
+        }
 
                   <div id="booksDiv">
                     <Card>
@@ -106,6 +164,8 @@ class BestBooks extends React.Component {
                         >
                           Delete Book
                         </Button>
+                        <br />
+                        <Button variant="warning" onClick={() => this.handelDisplayUpdateModal(book)}>Update Book</Button>
                       </Card.Body>
                     </Card>
                   </div>
