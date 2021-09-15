@@ -3,8 +3,9 @@ import axios from "axios";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import AddBook from "./AddBook";
-import UpdateBook from './UpdateBook';
+import UpdateBook from "./UpdateBook";
 import "./index.css";
+import { withAuth0 } from "@auth0/auth0-react";
 
 class BestBooks extends React.Component {
   constructor(props) {
@@ -13,7 +14,7 @@ class BestBooks extends React.Component {
       booksData: [],
       showAddModal: false,
       showUpdateModal: false,
-      selectedBookDataObj: {}
+      selectedBookDataObj: {},
     };
   }
 
@@ -46,57 +47,48 @@ class BestBooks extends React.Component {
       status: e.target.bookStatus.value,
       email: e.target.email.value,
     };
-    axios.put(`${process.env.REACT_APP_API_URL}/books/${this.state.selectedBookDataObj._id}`, reqBody).then(updatedBookObject => {
+    console.log(
+      `${process.env.REACT_APP_API_URL}/books/${this.state.selectedBookDataObj._id}`
+    );
+    axios
+      .put(
+        `${process.env.REACT_APP_API_URL}/books/${this.state.selectedBookDataObj._id}`,
+        reqBody
+      )
+      .then((updatedBookObject) => {
+        const updateBookArr = this.state.booksData.map((book) => {
+          if (book._id === this.state.selectedBookDataObj._id) {
+            book = updatedBookObject.data;
 
-  
-      const updateBookArr = this.state.booksData.map(book => {
-       
-console.log(book);
-        if (book._id === this.state.selectedBookDataObj._id) {
-          book = updatedBookObject.data
-          console.log(book,'ii');
+            return book;
+          }
+
           return book;
-          
-        }
-        console.log(book,'hello');
-        return book; 
-        
-      });
-      
-      this.setState({
-        booksData: updateBookArr,
-        selectedBookDataObj: {},
+        });
+
+        this.setState({
+          booksData: updateBookArr,
+          selectedBookDataObj: {},
+        });
+
+        this.handelDisplayUpdateModal();
       })
-
-console.log(updateBookArr);
-
-      this.handelDisplayUpdateModal(); 
-
-    }).catch(() => alert("Something went wrong!"));
-  }
+      .catch(() => alert("Something went wrong!"));
+  };
 
   handelDeleteBook = (bookId) => {
-    console.log("1");
-    console.log(`${process.env.REACT_APP_API_URL}/books/${bookId}`);
-
     axios
       .delete(`${process.env.REACT_APP_API_URL}/books/${bookId}`)
       .then((deleteResponse) => {
-        console.log("2");
-        console.log(`${process.env.REACT_APP_API_URL}/books`);
-        console.log(deleteResponse.data.deletedCount === 1);
         if (deleteResponse.data.deletedCount === 1) {
           const newBookArr = this.state.booksData.filter(
             (book) => book._id !== bookId
           );
-          console.log("3");
-          console.log(`${process.env.REACT_APP_API_URL}/books`);
+
           this.setState({ booksData: newBookArr });
         }
       })
       .catch(() => alert("something went wrong while deleting"));
-    console.log("4");
-    console.log(`${process.env.REACT_APP_API_URL}/books`);
   };
 
   handelDisplayAddModal = () => {
@@ -105,9 +97,9 @@ console.log(updateBookArr);
   handelDisplayUpdateModal = (BookObj) => {
     this.setState({
       showUpdateModal: !this.state.showUpdateModal,
-      selectedBookDataObj: BookObj
+      selectedBookDataObj: BookObj,
     });
-  }
+  };
 
   componentDidMount = () => {
     axios
@@ -139,17 +131,16 @@ console.log(updateBookArr);
                       />
                     </>
                   )}
-                  {
-          this.state.showUpdateModal &&
-          <>
-            <UpdateBook
-              show={this.state.showUpdateModal}
-              handelUpdateModal={this.handelUpdateModal}
-              handelDisplayUpdateModal={this.handelDisplayUpdateModal}
-              selectedBookDataObj={this.state.selectedBookDataObj}
-            />
-          </>
-        }
+                  {this.state.showUpdateModal && (
+                    <>
+                      <UpdateBook
+                        show={this.state.showUpdateModal}
+                        handelUpdateModal={this.handelUpdateModal}
+                        handelDisplayUpdateModal={this.handelDisplayUpdateModal}
+                        selectedBookDataObj={this.state.selectedBookDataObj}
+                      />
+                    </>
+                  )}
 
                   <div id="booksDiv">
                     <Card>
@@ -165,7 +156,12 @@ console.log(updateBookArr);
                           Delete Book
                         </Button>
                         <br />
-                        <Button variant="warning" onClick={() => this.handelDisplayUpdateModal(book)}>Update Book</Button>
+                        <Button
+                          variant="warning"
+                          onClick={() => this.handelDisplayUpdateModal(book)}
+                        >
+                          Update Book
+                        </Button>
                       </Card.Body>
                     </Card>
                   </div>
@@ -179,4 +175,4 @@ console.log(updateBookArr);
   }
 }
 
-export default BestBooks;
+export default withAuth0(BestBooks);
