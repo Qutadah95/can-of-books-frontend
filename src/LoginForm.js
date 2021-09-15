@@ -1,23 +1,20 @@
 import { Component } from "react";
-import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
 
 class LoginForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      userName: '',
-      password: '',
-    }
-
+      userName: "",
+      password: "",
+    };
   }
 
   render() {
-    /* TODO: create a simple login form that collects username and and email, and lets parent component know when form has been submitted */
-
     return (
       <div>
-        <Form >
+        <Form>
           <Form.Group className="mb-3" controlId="formBasicEmail">
             <Form.Label>Email address</Form.Label>
             <Form.Control type="email" placeholder="Enter email" />
@@ -40,6 +37,6 @@ class LoginForm extends Component {
       </div>
     );
   }
-};
+}
 
 export default LoginForm;
