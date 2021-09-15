@@ -25,7 +25,7 @@ class BestBooks extends React.Component {
       title: e.target.bookTitle.value,
       description: e.target.bookDescription.value,
       status: e.target.bookStatus.value,
-      email: e.target.email.value,
+      email: this.props.auth0.user.email,
     };
 
     axios
@@ -103,7 +103,9 @@ class BestBooks extends React.Component {
 
   componentDidMount = () => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/books`)
+      .get(
+        `${process.env.REACT_APP_API_URL}/books?email=${this.props.auth0.user.email}`
+      )
       .then((bookResponse) => {
         this.setState({ booksData: bookResponse.data });
       })
